@@ -125,7 +125,7 @@ public class NPC {
 					}
 					getEntity().setPositionRotation(n.b.getX() + 0.5,
 							n.b.getY(), n.b.getZ() + 0.5, angle, look);
-					((EntityPlayer) getEntity()).az = angle;
+					((EntityPlayer) getEntity()).aA = angle;
 				} else {
 					onFail.run();
 				}
@@ -137,7 +137,7 @@ public class NPC {
 					runningPath.getEnd().getYaw(),
 					runningPath.getEnd().getPitch());
 
-			((EntityPlayer) getEntity()).az = runningPath.getEnd().getYaw();
+			((EntityPlayer) getEntity()).aA = runningPath.getEnd().getYaw();
 			Bukkit.getServer().getScheduler().cancelTask(taskid);
 			taskid = 0;
 		}
