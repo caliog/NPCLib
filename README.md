@@ -1,6 +1,8 @@
 NPCLib
 ======
 
+Current Craftbukkit Version: 1.5.1-R0.1 Beta Build
+
 A Library to spawn and to manage npcs 
 
 This NPCLib is created by Redecouverte (follow him at: http://forums.bukkit.org/members/redecouverte.2043/)
@@ -16,4 +18,5 @@ Installation:
 
 3. You have to add the latest craftbukkit version as a lib to your project
 
-See http://forums.bukkit.org/threads/npcspawner-lib-spawn-basic-npcs.3298/ for more information !
+See http://forums.bukkit.org/threads/npcspawner-lib-spawn-basic-npcs.3298/ for more information and support!
+
