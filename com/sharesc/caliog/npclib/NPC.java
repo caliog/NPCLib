@@ -41,6 +41,7 @@ public class NPC {
 
 	public void moveTo(Location l) {
 		getBukkitEntity().teleport(l);
+		((EntityPlayer) getEntity()).aA = (float) l.getYaw();
 	}
 
 	public void pathFindTo(Location l, PathReturn callback) {
