@@ -3,24 +3,21 @@ package com.sharesc.caliog.npclib;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityTargetEvent;
 
-public class NpcEntityTargetEvent extends EntityTargetEvent {
+public class NPCEntityTargetEvent extends EntityTargetEvent {
 
-  @SuppressWarnings("unused")
-	private static final long serialVersionUID = -8103432985035183865L;
-
-	public static enum NpcTargetReason {
+	public static enum NPCTargetReason {
 		CLOSEST_PLAYER, NPC_RIGHTCLICKED, NPC_BOUNCED
 	}
 
-	private NpcTargetReason reason;
+	private NPCTargetReason reason;
 
-	public NpcEntityTargetEvent(Entity entity, Entity target,
-			NpcTargetReason reason) {
+	public NPCEntityTargetEvent(Entity entity, Entity target,
+			NPCTargetReason reason) {
 		super(entity, target, TargetReason.CUSTOM);
 		this.reason = reason;
 	}
 
-	public NpcTargetReason getNpcReason() {
+	public NPCTargetReason getNPCReason() {
 		return reason;
 	}
 

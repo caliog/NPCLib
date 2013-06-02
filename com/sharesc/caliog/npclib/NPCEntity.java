@@ -4,6 +4,7 @@ import net.minecraft.server.v1_5_R3.Entity;
 import net.minecraft.server.v1_5_R3.EntityHuman;
 import net.minecraft.server.v1_5_R3.EntityPlayer;
 import net.minecraft.server.v1_5_R3.EnumGamemode;
+import net.minecraft.server.v1_5_R3.Packet17EntityLocationAction;
 import net.minecraft.server.v1_5_R3.PlayerInteractManager;
 import net.minecraft.server.v1_5_R3.WorldServer;
 
@@ -18,8 +19,9 @@ import org.bukkit.event.entity.EntityTargetEvent;
 public class NPCEntity extends EntityPlayer {
 
   private int lastTargetId;
-	private long lastBounceTick;
-	private int lastBounceId;
+  private long lastBounceTick;
+  private int lastBounceId;
+  private boolean isSleeping;
 
 	public NPCEntity(NPCManager npcManager, BWorld world, String s,
 			PlayerInteractManager playerInteractManager) {
@@ -43,9 +45,9 @@ public class NPCEntity extends EntityPlayer {
 
 	@Override
 	public boolean a_(EntityHuman entity) {
-		EntityTargetEvent event = new NpcEntityTargetEvent(getBukkitEntity(),
+		EntityTargetEvent event = new NPCEntityTargetEvent(getBukkitEntity(),
 				entity.getBukkitEntity(),
-				NpcEntityTargetEvent.NpcTargetReason.NPC_RIGHTCLICKED);
+				NPCEntityTargetEvent.NPCTargetReason.NPC_RIGHTCLICKED);
 		CraftServer server = ((WorldServer) world).getServer();
 		server.getPluginManager().callEvent(event);
 
@@ -57,9 +59,9 @@ public class NPCEntity extends EntityPlayer {
 				- lastBounceTick > 1000)
 				&& entity.getBukkitEntity().getLocation()
 						.distanceSquared(getBukkitEntity().getLocation()) <= 1) {
-			EntityTargetEvent event = new NpcEntityTargetEvent(
+			EntityTargetEvent event = new NPCEntityTargetEvent(
 					getBukkitEntity(), entity.getBukkitEntity(),
-					NpcEntityTargetEvent.NpcTargetReason.NPC_BOUNCED);
+					NPCEntityTargetEvent.NPCTargetReason.NPC_BOUNCED);
 			CraftServer server = ((WorldServer) world).getServer();
 			server.getPluginManager().callEvent(event);
 
@@ -68,9 +70,9 @@ public class NPCEntity extends EntityPlayer {
 		}
 
 		if (lastTargetId == -1 || lastTargetId != entity.id) {
-			EntityTargetEvent event = new NpcEntityTargetEvent(
+			EntityTargetEvent event = new NPCEntityTargetEvent(
 					getBukkitEntity(), entity.getBukkitEntity(),
-					NpcEntityTargetEvent.NpcTargetReason.CLOSEST_PLAYER);
+					NPCEntityTargetEvent.NPCTargetReason.CLOSEST_PLAYER);
 			CraftServer server = ((WorldServer) world).getServer();
 			server.getPluginManager().callEvent(event);
 			lastTargetId = entity.id;
@@ -83,9 +85,9 @@ public class NPCEntity extends EntityPlayer {
 	public void c(Entity entity) {
 		if (lastBounceId != entity.id
 				|| System.currentTimeMillis() - lastBounceTick > 1000) {
-			EntityTargetEvent event = new NpcEntityTargetEvent(
+			EntityTargetEvent event = new NPCEntityTargetEvent(
 					getBukkitEntity(), entity.getBukkitEntity(),
-					NpcEntityTargetEvent.NpcTargetReason.NPC_BOUNCED);
+					NPCEntityTargetEvent.NPCTargetReason.NPC_BOUNCED);
 			CraftServer server = ((WorldServer) world).getServer();
 			server.getPluginManager().callEvent(event);
 
@@ -100,6 +102,28 @@ public class NPCEntity extends EntityPlayer {
 	@Override
 	public void move(double arg0, double arg1, double arg2) {
 		setPosition(arg0, arg1, arg2);
+	}
+	
+	public void setSleeping(boolean sleep) {
+		  if (sleep) {
+		    this.sleeping = true;
+		    this.isSleeping = true;
+		    Packet17EntityLocationAction packet17entitylocationaction = new Packet17EntityLocationAction(this, 0, 22, 162, 187);
+
+		    o().getTracker().a(this, packet17entitylocationaction);
+		    this.playerConnection.a(this.locX, this.locY, this.locZ, this.yaw, this.pitch);
+		    this.playerConnection.sendPacket(packet17entitylocationaction);
+		    a(1.0F, 2.0F);
+		  }
+		  else {
+		    this.playerConnection.player.a(false, true, true);
+		    this.sleeping = false;
+		    this.isSleeping = false;
+		  }
+	}
+	
+	public boolean isSleeping(){
+		return isSleeping;
 	}
 
 }
