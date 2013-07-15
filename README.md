@@ -1,7 +1,7 @@
 NPCLib
 ======
 
-Current Craftbukkit Version: 1.5.1-R0.1 Beta Build
+Current Craftbukkit Version: 1.6.2... Dev Build
 
 A Library to spawn and to manage npcs 
 
