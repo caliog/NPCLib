@@ -1,15 +1,15 @@
 package com.sharesc.caliog.npclib;
 
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityHuman;
-import net.minecraft.server.v1_5_R3.EntityPlayer;
-import net.minecraft.server.v1_5_R3.EnumGamemode;
-import net.minecraft.server.v1_5_R3.Packet17EntityLocationAction;
-import net.minecraft.server.v1_5_R3.PlayerInteractManager;
-import net.minecraft.server.v1_5_R3.WorldServer;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityHuman;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.EnumGamemode;
+import net.minecraft.server.v1_6_R2.Packet17EntityLocationAction;
+import net.minecraft.server.v1_6_R2.PlayerInteractManager;
+import net.minecraft.server.v1_6_R2.WorldServer;
 
-import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 /**
@@ -44,7 +44,7 @@ public class NPCEntity extends EntityPlayer {
 	}
 
 	@Override
-	public boolean a_(EntityHuman entity) {
+	public boolean a(EntityHuman entity) {
 		EntityTargetEvent event = new NPCEntityTargetEvent(getBukkitEntity(),
 				entity.getBukkitEntity(),
 				NPCEntityTargetEvent.NPCTargetReason.NPC_RIGHTCLICKED);
