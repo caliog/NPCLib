@@ -215,7 +215,8 @@ public class NPCManager {
 		}
 		return null;
 	}
-
+	
+	/* This method is not usuable !! EntityHuman.name is protected and final ! Method has to be rewritten
 	public void rename(String id, String name) {
 		if (name.length() > 16) { // Check and nag if name is too long, spawn
 									// NPC anyway with shortened name.
@@ -244,6 +245,7 @@ public class NPCManager {
 		}
 		s.everyoneSleeping();
 	}
+	*/
 
 	public BServer getServer() {
 		return server;
