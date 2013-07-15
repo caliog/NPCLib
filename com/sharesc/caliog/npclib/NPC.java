@@ -3,8 +3,8 @@ package com.sharesc.caliog.npclib;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
