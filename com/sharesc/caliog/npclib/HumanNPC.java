@@ -40,10 +40,10 @@ public class HumanNPC extends NPC {
 		((HumanEntity) getEntity().getBukkitEntity())
 				.setItemInHand(new ItemStack(m, 1, damage));
 	}
-
-	public void setName(String name) {
-		((NPCEntity) getEntity()).name = name;
-	}
+	//name is a protcted final String in EntityHuman.java ; not sure if rename is still possible
+	//public void setName(String name) {
+	//	((NPCEntity) getEntity()).name = name;
+	//}
 
 	public String getName() {
 		return ((NPCEntity) getEntity()).name;
@@ -129,7 +129,7 @@ public class HumanNPC extends NPC {
 		}
 		getEntity().yaw = (float) (newYaw - 90);
 		getEntity().pitch = (float) newPitch;
-		((EntityPlayer) getEntity()).aA = (float) (newYaw - 90);
+		((EntityPlayer) getEntity()).aP = (float) (newYaw - 90);//aA --> aP /tested by caliog
 	}
 
 }
