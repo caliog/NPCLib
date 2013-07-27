@@ -50,8 +50,7 @@ public class NPCEntity extends EntityPlayer {
 				NPCEntityTargetEvent.NPCTargetReason.NPC_RIGHTCLICKED);
 		CraftServer server = ((WorldServer) world).getServer();
 		server.getPluginManager().callEvent(event);
-
-		return super.a_(entity);
+		return super.a(entity);
 	}
 
 	public void b_(EntityHuman entity) {
@@ -110,7 +109,7 @@ public class NPCEntity extends EntityPlayer {
 		    this.isSleeping = true;
 		    Packet17EntityLocationAction packet17entitylocationaction = new Packet17EntityLocationAction(this, 0, 22, 162, 187);
 
-		    o().getTracker().a(this, packet17entitylocationaction);
+		    p().getTracker().a(this, packet17entitylocationaction);
 		    this.playerConnection.a(this.locX, this.locY, this.locZ, this.yaw, this.pitch);
 		    this.playerConnection.sendPacket(packet17entitylocationaction);
 		    a(1.0F, 2.0F);
