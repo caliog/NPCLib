@@ -46,7 +46,7 @@ public class HumanNPC extends NPC {
 	//}
 
 	public String getName() {
-		return ((NPCEntity) getEntity()).name;
+		return ((NPCEntity) getEntity()).getName();
 	}
 
 	public PlayerInventory getInventory() {

@@ -39,7 +39,7 @@ public class Node { // Holds data about each block we check
 	public void update() {
 		notsolid = true;
 		if (b.getType() != Material.AIR) {
-			final AxisAlignedBB box = net.minecraft.server.v1_5_R3.Block.byId[b
+			final AxisAlignedBB box = net.minecraft.server.v1_6_R2.Block.byId[b
 					.getTypeId()].b(((CraftWorld) b.getWorld()).getHandle(),
 					b.getX(), b.getY(), b.getZ());
 			if (box != null) {
