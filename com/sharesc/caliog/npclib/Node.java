@@ -39,16 +39,14 @@ public class Node { // Holds data about each block we check
 	public void update() {
 		notsolid = true;
 		if (b.getType() != Material.AIR) {
-			if (b.getType() != Material.AIR) {
-				AxisAlignedBB box = net.minecraft.server.v1_6_R2.Block.byId[
-					(new BWorld(b.getWorld())).
-			                getCraftWorld().
-			                getBlockTypeIdAt(b.getLocation())
-			            ].b(((CraftWorld) b.getWorld()).getHandle(), b.getX(), b.getY(), b.getZ());
-			if (box != null) {
-				if (Math.abs(box.e - box.b) > 0.2) {
-					notsolid = false;
-				}
+			AxisAlignedBB box = net.minecraft.server.v1_6_R2.Block.byId[
+				(new BWorld(b.getWorld())).
+			               getCraftWorld().
+			               getBlockTypeIdAt(b.getLocation())
+			           ].b(((CraftWorld) b.getWorld()).getHandle(), b.getX(), b.getY(), b.getZ());
+		if (box != null) {
+			if (Math.abs(box.e - box.b) > 0.2) {
+				notsolid = false;
 			}
 		}
 		liquid = liquids.contains(b.getType());
