@@ -2,49 +2,35 @@ package com.sharesc.caliog.npclib;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.SocketAddress;
 
-import net.minecraft.server.v1_6_R2.Connection;
-import net.minecraft.server.v1_6_R2.MinecraftServer;
-import net.minecraft.server.v1_6_R2.NetworkManager;
-import net.minecraft.server.v1_6_R2.Packet;
+import net.minecraft.server.v1_7_R1.NetworkManager;
 
-/**
- * 
- * @author martin
- */
 public class NPCNetworkManager extends NetworkManager {
 
-  public NPCNetworkManager() throws IOException {
-		super(MinecraftServer.getServer().getLogger(), new NullSocket(),
-				"NPC Manager", new Connection() {
-					@Override
-					public boolean a() {
-						return true;
-					}
-				}, null);
-		try {
-			Field f = NetworkManager.class.getDeclaredField("n");
-			f.setAccessible(true);
-			f.set(this, false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    public NPCNetworkManager() throws IOException {
+	super(false);
+
+	try {
+	    Field channel = getField("k");
+	    Field address = getField("l");
+
+	    if (channel == null || address == null)
+		return;
+	    channel.set(this, new NPCChannel(null));
+	    address.set(this, new SocketAddress() {
+		private static final long serialVersionUID = 2173638219433070267L;
+
+	    });
+	} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+	    e.printStackTrace();
 	}
 
-	@Override
-	public void a(Connection nethandler) {
-	}
+    }
 
-	@Override
-	public void queue(Packet packet) {
-	}
-
-	@Override
-	public void a(String s, Object... aobject) {
-	}
-
-	@Override
-	public void a() {
-	}
-
+    private Field getField(String string) throws NoSuchFieldException, SecurityException {
+	Field f = NetworkManager.class.getDeclaredField(string);
+	f.setAccessible(true);
+	return f;
+    }
 }
