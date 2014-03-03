@@ -66,7 +66,7 @@ public class NPCManager {
 					}
 				}, 1L, 1L);
 		Bukkit.getServer().getPluginManager().registerEvents(new SL(), plugin);
-		Bukkit.getServer().getPluginManager().registerEvents(new WL(), plugin);
+		Bukkit.getServer().getPluginManager().registerEvents(new WL(), plugin);//if we do not despawn npcs on chunk unload this is not necessary
 	}
 
 	public BWorld getBWorld(World world) {
@@ -137,6 +137,7 @@ public class NPCManager {
 			npcEntity.setPositionRotation(l.getX(), l.getY(), l.getZ(),
 					l.getYaw(), l.getPitch());
 			world.getWorldServer().addEntity(npcEntity); // the right way
+			world.getWorldServer().players.remove(npcEntity);//fixes tracker crash
 			NPC npc = new HumanNPC(npcEntity);
 			npcs.put(id, npc);
 			return npc;
