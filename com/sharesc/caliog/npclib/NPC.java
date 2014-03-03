@@ -1,147 +1,105 @@
 package com.sharesc.caliog.npclib;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_7_R1.AxisAlignedBB;
+import net.minecraft.server.v1_7_R1.Entity;
+import net.minecraft.server.v1_7_R1.EntityPlayer;
+import net.minecraft.server.v1_7_R1.PlayerChunkMap;
+import net.minecraft.server.v1_7_R1.WorldProvider;
+import net.minecraft.server.v1_7_R1.WorldServer;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public class NPC {
+public class BWorld {
 
-  private Entity entity;
-	private NPCPathFinder path;
-	private Iterator<Node> pathIterator;
-	private Node last;
-	private NPCPath runningPath;
-	private int taskid;
-	private Runnable onFail;
+    private BServer server;
+    private final World world;
+    private CraftWorld cWorld;
+    private WorldServer wServer;
+    private WorldProvider wProvider;
 
-	public NPC(Entity entity) {
-		this.entity = entity;
+    public BWorld(BServer server, String worldName) {
+	this.server = server;
+	world = server.getServer().getWorld(worldName);
+	try {
+	    cWorld = (CraftWorld) world;
+	    wServer = cWorld.getHandle();
+	    wProvider = wServer.worldProvider;
+	} catch (final Exception ex) {
+	    Logger.getLogger("Minecraft").log(Level.SEVERE, null, ex);
 	}
+    }
 
-	public Entity getEntity() {
-		return entity;
+    public BWorld(World world) {
+	this.world = world;
+	try {
+	    cWorld = (CraftWorld) world;
+	    wServer = cWorld.getHandle();
+	    wProvider = wServer.worldProvider;
+	} catch (final Exception ex) {
+	    Logger.getLogger("Minecraft").log(Level.SEVERE, null, ex);
 	}
+    }
 
-	public void removeFromWorld() {
-		try {
-			entity.world.removeEntity(entity);
-		} catch (Exception e) {
-			e.printStackTrace();
+    public PlayerChunkMap getChunkMap() {
+	return wServer.getPlayerChunkMap();
+    }
+
+    public CraftWorld getCraftWorld() {
+	return cWorld;
+    }
+
+    public WorldServer getWorldServer() {
+	return wServer;
+    }
+
+    public WorldProvider getWorldProvider() {
+	return wProvider;
+    }
+
+    public boolean createExplosion(double x, double y, double z, float power) {
+	return wServer.explode(null, x, y, z, power, false).wasCanceled ? false : true;
+    }
+
+    public boolean createExplosion(Location l, float power) {
+	return wServer.explode(null, l.getX(), l.getY(), l.getZ(), power, false).wasCanceled ? false : true;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void removeEntity(final Player player, JavaPlugin plugin) {
+	server.getServer().getScheduler().callSyncMethod(plugin, new Callable<Object>() {
+	    @Override
+	    public Object call() throws Exception {
+		final Location loc = player.getLocation();
+		final CraftWorld craftWorld = (CraftWorld) player.getWorld();
+		final CraftPlayer craftPlayer = (CraftPlayer) player;
+
+		final double x = loc.getX() + 0.5;
+		final double y = loc.getY() + 0.5;
+		final double z = loc.getZ() + 0.5;
+		final double radius = 10;
+
+		List<Entity> entities = new ArrayList<>();
+		final AxisAlignedBB bb = AxisAlignedBB.a(x - radius, y - radius, z - radius, x + radius, y + radius, z
+			+ radius);
+		entities = craftWorld.getHandle().getEntities(craftPlayer.getHandle(), bb);
+		for (final Entity o : entities) {
+		    if (!(o instanceof EntityPlayer)) {
+			o.getBukkitEntity().remove();
+		    }
 		}
-	}
-
-	public org.bukkit.entity.Entity getBukkitEntity() {
-		return entity.getBukkitEntity();
-	}
-
-	public void moveTo(Location l) {
-		getBukkitEntity().teleport(l);
-		((EntityPlayer) getEntity()).aA = (float) l.getYaw();
-	}
-
-	public void pathFindTo(Location l, PathReturn callback) {
-		pathFindTo(l, 3000, callback);
-	}
-
-	public void pathFindTo(Location l, int maxIterations, PathReturn callback) {
-		if (path != null) {
-			path.cancel = true;
-		}
-		if (l != null)
-			if (l.getWorld() != getBukkitEntity().getWorld()) {
-				ArrayList<Node> pathList = new ArrayList<Node>();
-				pathList.add(new Node(l.getBlock()));
-				callback.run(new NPCPath(null, pathList, l));
-			} else {
-				path = new NPCPathFinder(getBukkitEntity().getLocation(), l,
-						maxIterations, callback);
-				path.start();
-			}
-	}
-
-	public void walkTo(Location l) {
-		walkTo(l, 3000);
-	}
-
-	public void walkTo(final Location l, final int maxIterations) {
-		pathFindTo(l, maxIterations, new PathReturn() {
-			@Override
-			public void run(NPCPath path) {
-				usePath(path, new Runnable() {
-					@Override
-					public void run() {
-						walkTo(l, maxIterations);
-					}
-				});
-			}
-		});
-	}
-
-	public void usePath(NPCPath path) {
-		usePath(path, new Runnable() {
-			@Override
-			public void run() {
-				walkTo(runningPath.getEnd(), 3000);
-			}
-		});
-	}
-
-	public void usePath(NPCPath path, Runnable onFail) {
-		if (taskid == 0) {
-			taskid = Bukkit
-					.getServer()
-					.getScheduler()
-					.scheduleSyncRepeatingTask(NPCManager.plugin,
-							new Runnable() {
-								@Override
-								public void run() {
-									pathStep();
-								}
-							}, 6L, 6L);
-		}
-		pathIterator = path.getPath().iterator();
-		runningPath = path;
-		this.onFail = onFail;
-	}
-
-	private void pathStep() {
-		if (pathIterator.hasNext()) {
-			Node n = pathIterator.next();
-			if (n.b.getWorld() != getBukkitEntity().getWorld()) {
-				getBukkitEntity().teleport(n.b.getLocation());
-			} else {
-				float angle = getEntity().yaw;
-				float look = getEntity().pitch;
-				if (last == null || runningPath.checkPath(n, last, true)) {
-					if (last != null) {
-						angle = (float) Math.toDegrees(Math.atan2(last.b.getX()
-								- n.b.getX(), n.b.getZ() - last.b.getZ()));
-						look = (float) (Math.toDegrees(Math.asin(last.b.getY()
-								- n.b.getY())) / 2);
-					}
-					getEntity().setPositionRotation(n.b.getX() + 0.5,
-							n.b.getY(), n.b.getZ() + 0.5, angle, look);
-					((EntityPlayer) getEntity()).aA = angle;
-				} else {
-					onFail.run();
-				}
-			}
-			last = n;
-		} else {
-			getEntity().setPositionRotation(runningPath.getEnd().getX(),
-					runningPath.getEnd().getY(), runningPath.getEnd().getZ(),
-					runningPath.getEnd().getYaw(),
-					runningPath.getEnd().getPitch());
-
-			((EntityPlayer) getEntity()).aA = runningPath.getEnd().getYaw();
-			Bukkit.getServer().getScheduler().cancelTask(taskid);
-			taskid = 0;
-		}
-	}
-
+		return null;
+	    }
+	});
+    }
 }
