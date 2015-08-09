@@ -1,20 +1,20 @@
-package com.sharesc.caliog.npclib;
+package org.caliog.npclib;
 
-import net.minecraft.server.v1_7_R1.Packet;
+import net.minecraft.server.v1_8_R3.Packet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class NPCUtils {
-    public static void sendPacketNearby(Location location, Packet packet) {
+    public static void sendPacketNearby(Location location, Packet<?> packet) {
 	sendPacketNearby(location, packet, 64);
     }
 
-    public static void sendPacketNearby(Location location, Packet packet, double radius) {
+    public static void sendPacketNearby(Location location, Packet<?> packet, double radius) {
 	radius *= radius;
 	final World world = location.getWorld();
 	for (Player p : Bukkit.getServer().getOnlinePlayers()) {
