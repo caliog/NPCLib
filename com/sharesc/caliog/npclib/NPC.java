@@ -1,15 +1,16 @@
-package com.sharesc.caliog.npclib;
+package org.caliog.Villagers.XX.npclib;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.minecraft.server.v1_7_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class NPC {
-    private final net.minecraft.server.v1_7_R1.Entity entity;
+    private final net.minecraft.server.v1_8_R3.Entity entity;
     private NPCPathFinder path;
     private Iterator<Node> pathIterator;
     private Node last;
@@ -17,11 +18,11 @@ public class NPC {
     private int taskid;
     private Runnable onFail;
 
-    public NPC(net.minecraft.server.v1_7_R1.Entity entity) {
+    public NPC(net.minecraft.server.v1_8_R3.Entity entity) {
 	this.entity = entity;
     }
 
-    public net.minecraft.server.v1_7_R1.Entity getEntity() {
+    public net.minecraft.server.v1_8_R3.Entity getEntity() {
 	return this.entity;
     }
 
@@ -90,7 +91,7 @@ public class NPC {
 			public void run() {
 			    NPC.this.pathStep();
 			}
-		    }, 8L, 8L);
+		    }, 10L, 8L);
 	}
 	this.pathIterator = path.getPath().iterator();
 	this.runningPath = path;
@@ -129,7 +130,13 @@ public class NPC {
     }
 
     public void setYaw(float yaw) {
-	getEntity().yaw = yaw;
-	((EntityPlayer) getEntity()).aP = yaw;
+	Entity e = getEntity();
+	e.yaw = yaw;
+	EntityLiving ee = (EntityLiving) e;
+	// I'm not sure if these have to be set, works anyway  caliog
+	//ee.aI = yaw;
+	//ee.aG = yaw; Only if Entity is not Human
+	//ee.aJ = yaw;
+	ee.aK = yaw;
     }
 }
