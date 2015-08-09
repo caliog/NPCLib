@@ -1,12 +1,13 @@
-package com.sharesc.caliog.npclib;
+package org.caliog.npclib;
 
 import java.lang.reflect.Field;
 
-import net.minecraft.server.v1_7_R1.EntityHuman;
-import net.minecraft.server.v1_7_R1.EntityPlayer;
-import net.minecraft.server.v1_7_R1.PacketPlayOutAnimation;
-import net.minecraft.server.v1_7_R1.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_7_R1.WorldServer;
+import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.EntityHuman;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_8_R3.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class HumanNPC extends NPC {
-    private net.minecraft.server.v1_7_R1.ItemStack[] previousEquipment = { null, null, null, null, null };
+    private net.minecraft.server.v1_8_R3.ItemStack[] previousEquipment = { null, null, null, null, null };
 
     public HumanNPC(NPCEntity npcEntity) {
 	super(npcEntity);
@@ -81,13 +82,15 @@ public class HumanNPC extends NPC {
 	final double zDiff = point.getZ() - npcLoc.getZ();
 	final double DistanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
 	final double DistanceY = Math.sqrt(DistanceXZ * DistanceXZ + yDiff * yDiff);
-	double newYaw = Math.acos(xDiff / DistanceXZ) * 180 / Math.PI;
-	final double newPitch = Math.acos(yDiff / DistanceY) * 180 / Math.PI - 90;
+	double newYaw = Math.toDegrees(Math.acos(xDiff / DistanceXZ));
+	final double newPitch = Math.toDegrees(Math.acos(yDiff / DistanceY)) - 90D;
 	if (zDiff < 0.0) {
-	    newYaw = newYaw + Math.abs(180 - newYaw) * 2;
+	    newYaw += Math.abs(180D - newYaw) * 2D;
 	}
-	getEntity().pitch = (float) newPitch;
-	setYaw((float) newYaw - 90);
+	Entity e = getEntity();
+	newYaw -= 90D;
+	e.pitch = (float) newPitch;
+	setYaw((float) newYaw);
 
     }
 
@@ -99,22 +102,12 @@ public class HumanNPC extends NPC {
     }
 
     public void updateEquipment() {
-	/*
-	 * for (int i = 0; i < previousEquipment.length; i++) {
-	 * net.minecraft.server.ItemStack previous = previousEquipment[i];
-	 * net.minecraft.server.ItemStack current =
-	 * ((EntityPlayer)getEntity()).getEquipment(i); if (previous != current)
-	 * { NPCUtils.sendPacketNearby(getBukkitEntity().getLocation(), new
-	 * Packet5EntityEquipment(getEntity().id, i, current));
-	 * previousEquipment[i] = current; } }
-	 */
-
-	/**/
+	
 	int changes = 0;
-	net.minecraft.server.v1_7_R1.ItemStack[] newI = new net.minecraft.server.v1_7_R1.ItemStack[previousEquipment.length];
+	net.minecraft.server.v1_8_R3.ItemStack[] newI = new net.minecraft.server.v1_8_R3.ItemStack[previousEquipment.length];
 	for (int i = 0; i < previousEquipment.length; i++) {
-	    net.minecraft.server.v1_7_R1.ItemStack previous = previousEquipment[i];
-	    net.minecraft.server.v1_7_R1.ItemStack current = ((EntityPlayer) getEntity()).getEquipment(i);
+	    net.minecraft.server.v1_8_R3.ItemStack previous = previousEquipment[i];
+	    net.minecraft.server.v1_8_R3.ItemStack current = ((EntityPlayer) getEntity()).getEquipment(i);
 	    newI[i] = current;
 	    if (current == null) {
 		if (previous != null) {
@@ -123,7 +116,7 @@ public class HumanNPC extends NPC {
 		    ++changes;
 		}
 	    } else {
-		if (!net.minecraft.server.v1_7_R1.ItemStack.equals(previous, current)
+		if (!net.minecraft.server.v1_8_R3.ItemStack.equals(previous, current)
 			|| (previous != null && !previous.equals(current))) {
 		    NPCUtils.sendPacketNearby(getBukkitEntity().getLocation(), new PacketPlayOutEntityEquipment(
 			    getEntity().getId(), i, current));
