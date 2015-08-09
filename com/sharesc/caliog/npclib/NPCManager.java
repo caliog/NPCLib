@@ -1,4 +1,4 @@
-package com.sharesc.caliog.npclib;
+package org.caliog.npclib;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -8,22 +8,31 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
-import net.minecraft.server.v1_7_R1.Entity;
-import net.minecraft.server.v1_7_R1.PlayerInteractManager;
-import net.minecraft.server.v1_7_R1.WorldServer;
-import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.Packet;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R3.PlayerInteractManager;
+import net.minecraft.server.v1_8_R3.WorldServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.mojang.authlib.GameProfile;
 
 public class NPCManager {
 
@@ -93,8 +102,10 @@ public class NPCManager {
 	    name = tmp;
 	}
 	final BWorld world = getBWorld(l.getWorld());
-	final NPCEntity npcEntity = new NPCEntity(this, world, new GameProfile(id, name), new PlayerInteractManager(
-		world.getWorldServer()));
+	final NPCEntity npcEntity = new NPCEntity(this, world, new GameProfile(UUID.randomUUID(), name),
+		new PlayerInteractManager(world.getWorldServer()));
+	sendPacketsTo(Bukkit.getOnlinePlayers(), new Packet[] { new PacketPlayOutPlayerInfo(
+		PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, new EntityPlayer[] { npcEntity }) });
 	npcEntity.setPositionRotation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
 	final HumanNPC npc = new HumanNPC(npcEntity);
 	npc.setYaw(l.getYaw());
@@ -102,6 +113,25 @@ public class NPCManager {
 	world.getWorldServer().players.remove(npcEntity);
 	npcs.put(id, npc);
 	return npc;
+    }
+
+    public void sendPacketsTo(Iterable<? extends Player> recipients, Packet<?>... packets) {
+	Iterable<EntityPlayer> rcp = Iterables.transform(recipients, new Function<Player, EntityPlayer>() {
+
+	    @Override
+	    public EntityPlayer apply(Player a) {
+		return ((CraftPlayer) a).getHandle();
+	    }
+	});
+	for (EntityPlayer r : rcp) {
+	    if (r != null) {
+		for (Packet<?> packet : packets) {
+		    if (packet != null) {
+			r.playerConnection.sendPacket(packet);
+		    }
+		}
+	    }
+	}
     }
 
     public void despawnById(String id) {
