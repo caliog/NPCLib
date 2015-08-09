@@ -1,13 +1,14 @@
-package com.sharesc.caliog.npclib;
+package org.caliog.npclib;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.server.v1_7_R1.AxisAlignedBB;
+import net.minecraft.server.v1_8_R3.AxisAlignedBB;
+import net.minecraft.server.v1_8_R3.BlockPosition;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
 public class Node { // Holds data about each block we check
 
@@ -40,8 +41,9 @@ public class Node { // Holds data about each block we check
     public void update() {
 	notsolid = true;
 	if (b.getType() != Material.AIR) {
-	    final AxisAlignedBB box = net.minecraft.server.v1_7_R1.Block.e(b.getTypeId()).a(
-		    ((CraftWorld) b.getWorld()).getHandle(), b.getX(), b.getY(), b.getZ());
+	    final AxisAlignedBB box = net.minecraft.server.v1_8_R3.Block.getById(b.getTypeId()).a(
+		    ((CraftWorld) b.getWorld()).getHandle(), new BlockPosition(b.getX(), b.getY(), b.getZ()),
+		    net.minecraft.server.v1_8_R3.Block.getByCombinedId(b.getTypeId()));
 	    if (box != null) {
 		if (Math.abs(box.e - box.b) > 0.2) {
 		    notsolid = false;
