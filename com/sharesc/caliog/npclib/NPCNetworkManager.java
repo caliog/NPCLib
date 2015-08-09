@@ -1,23 +1,25 @@
-package com.sharesc.caliog.npclib;
+package org.caliog.npclib;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.SocketAddress;
 
-import net.minecraft.server.v1_7_R1.NetworkManager;
+import net.minecraft.server.v1_8_R3.EnumProtocolDirection;
+import net.minecraft.server.v1_8_R3.NetworkManager;
 
 public class NPCNetworkManager extends NetworkManager {
 
     public NPCNetworkManager() throws IOException {
-	super(false);
+
+	super(EnumProtocolDirection.CLIENTBOUND);
 
 	try {
-	    Field channel = getField("k");
+	    Field channel = getField("channel");
 	    Field address = getField("l");
 
 	    if (channel == null || address == null)
 		return;
-	    channel.set(this, new NPCChannel(null));
+	    channel.set(this, new NPCChannel());
 	    address.set(this, new SocketAddress() {
 		private static final long serialVersionUID = 2173638219433070267L;
 
