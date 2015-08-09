@@ -1,4 +1,4 @@
-package com.sharesc.caliog.npclib;
+package org.caliog.npclib;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityTargetEvent;
