@@ -1,4 +1,4 @@
-package org.caliog.Villagers.XX.npclib;
+package org.caliog.npclib;
 
 import java.util.ArrayList;
 import java.util.Iterator;
