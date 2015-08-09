@@ -1,4 +1,4 @@
-package com.sharesc.caliog.npclib;
+package org.caliog.npclib;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,17 +6,17 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_7_R1.AxisAlignedBB;
-import net.minecraft.server.v1_7_R1.Entity;
-import net.minecraft.server.v1_7_R1.EntityPlayer;
-import net.minecraft.server.v1_7_R1.PlayerChunkMap;
-import net.minecraft.server.v1_7_R1.WorldProvider;
-import net.minecraft.server.v1_7_R1.WorldServer;
+import net.minecraft.server.v1_8_R3.AxisAlignedBB;
+import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.PlayerChunkMap;
+import net.minecraft.server.v1_8_R3.WorldProvider;
+import net.minecraft.server.v1_8_R3.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -75,7 +75,6 @@ public class BWorld {
 	return wServer.explode(null, l.getX(), l.getY(), l.getZ(), power, false).wasCanceled ? false : true;
     }
 
-    @SuppressWarnings("unchecked")
     public void removeEntity(final Player player, JavaPlugin plugin) {
 	server.getServer().getScheduler().callSyncMethod(plugin, new Callable<Object>() {
 	    @Override
